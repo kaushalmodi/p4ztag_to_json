@@ -1,0 +1,56 @@
+#+title: P4 Ztag to JSON
+
+Little utility to convert the Perforce P4 "Ztag" format data to JSON.
+
+* Sample "ztag" data
+#+begin_example
+... depotFile //abc/def/ghi/TRUNK/jkl/mno/pqr.stu
+... clientFile //ws:vwx:def.yz:7434600b/ghi/jkl/mno/pqr.stu
+... rev 7
+... haveRev 3
+... action edit
+... change 568524
+... type text
+... user vwx
+... client ws:vwx:def.yz:0680383b
+
+... depotFile //abc/def/ghi/TRUNK/jkl/mno/PQR.STU
+... clientFile //ws:vwx:def.yz:6824560b/ghi/jkl/mno/PQR.STU
+... rev 1
+... haveRev 6
+... action edit
+... change 085030
+... type text
+... user vwx
+... client ws:vwx:def.yz:8464768b
+#+end_example
+* Converted JSON
+#+begin_src json
+[
+  {
+    "depotFile": "//abc/def/ghi/TRUNK/jkl/mno/pqr.stu",
+    "clientFile": "//ws:vwx:def.yz:7434600b/ghi/jkl/mno/pqr.stu",
+    "rev": "7",
+    "haveRev": "3",
+    "action": "edit",
+    "change": "568524",
+    "type": "text",
+    "user": "vwx",
+    "client": "ws:vwx:def.yz:0680383b"
+  },
+  {
+    "depotFile": "//abc/def/ghi/TRUNK/jkl/mno/PQR.STU",
+    "clientFile": "//ws:vwx:def.yz:6824560b/ghi/jkl/mno/PQR.STU",
+    "rev": "1",
+    "haveRev": "6",
+    "action": "edit",
+    "change": "085030",
+    "type": "text",
+    "user": "vwx",
+    "client": "ws:vwx:def.yz:8464768b"
+  }
+]
+#+end_src
+* References
+- [[https://www.perforce.com/manuals/cmdref/Content/CmdRef/Commands%20by%20Functional%20Area.html][Helix Core P4 Command Reference]]
+- [[https://www.perforce.com/blog/fun-formatting][Fun with Formatting -- Perforce Blog]]
