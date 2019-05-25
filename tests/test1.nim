@@ -17,7 +17,8 @@ suite "ztag to json":
     "change": "568524",
     "type": "text",
     "user": "vwx",
-    "client": "ws:vwx:def.yz:0680383b"
+    "client": "ws:vwx:def.yz:0680383b",
+    "payload": "payload of first record1\n\npayload of first record2\npayload of first record3"
   },
   {
     "depotFile": "//abc/def/ghi/TRUNK/jkl/mno/PQR.STU",
@@ -28,7 +29,16 @@ suite "ztag to json":
     "change": "085030",
     "type": "text",
     "user": "vwx",
-    "client": "ws:vwx:def.yz:8464768b"
+    "client": "ws:vwx:def.yz:8464768b",
+    "payload": "payload of second record1\n\npayload of second record2\npayload of second record3\n"
+  },
+  {
+    "abc": "d/e/f",
+    "ghi": "1.2.3"
+  },
+  {
+    "abc": "j:k:l",
+    "mno": "456.789"
   }
 ]"""
 

@@ -8,6 +8,10 @@
 ... user vwx
 ... client ws:vwx:def.yz:0680383b
 
+payload of first record1
+
+payload of first record2
+payload of first record3
 ... depotFile //abc/def/ghi/TRUNK/jkl/mno/PQR.STU
 ... clientFile //ws:vwx:def.yz:6824560b/ghi/jkl/mno/PQR.STU
 ... rev 1
@@ -17,3 +21,14 @@
 ... type text
 ... user vwx
 ... client ws:vwx:def.yz:8464768b
+
+payload of second record1
+
+payload of second record2
+payload of second record3
+
+... abc d/e/f
+... ghi 1.2.3
+
+... abc j:k:l
+... mno 456.789

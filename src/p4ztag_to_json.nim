@@ -15,25 +15,36 @@ proc addJsonNodeMaybe(jArr, jElem: var JsonNode) =
     jArr.add(jElem)   # Empty line in ztag marks the end of one record
     jElem = parseJson("{}") # Reset jElem to be an empty node
 
-proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode) =
-  # echo line
+proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; payloadStarted: var bool) =
+  # echo line & $payloadStarted
   if line.startsWith(ztagPrefix):
     let
       splits = line[ztagPrefix.len .. ^1].split(' ', maxsplit=2)
       key = splits[0]
       value = splits[1]
+    if payloadStarted:
+      jArr.addJsonNodeMaybe(jElem)
+      payloadStarted = false
     jElem[key] = %* value
   else:
-    jArr.addJsonNodeMaybe(jElem)
+    payloadStarted = true
+    if not jElem.hasKey("payload"):
+      if line.len > 0:
+        jElem["payload"] = %* line
+    else:
+      let
+        existingPayload = jElem["payload"].getStr()
+      jElem["payload"] = %* (existingPayload & "\n" & line)
 
 proc ztagFileToJson*(filename: string) =
   ## Read input ztag file and convert/write to a JSON file.
   var
     jArr = parseJson("[]")      # Initialize JsonNode array
     jElem = parseJson("{}")     # Initialize JsonNode array element
+    payloadStarted = false
 
   for line in filename.lines:
-    convertZtagLineToJson(line, jElem, jArr)
+    convertZtagLineToJson(line, jElem, jArr, payloadStarted)
   jArr.addJsonNodeMaybe(jElem)
   # echo jArr.pretty()
 
@@ -64,9 +75,10 @@ proc ztagStringToJson*(ztag: string): string =
   var
     jArr = parseJson("[]")      # Initialize JsonNode array
     jElem = parseJson("{}")     # Initialize JsonNode array element
+    payloadStarted = false
 
   for line in ztag.splitLines():
-    convertZtagLineToJson(line, jElem, jArr)
+    convertZtagLineToJson(line, jElem, jArr, payloadStarted)
   jArr.addJsonNodeMaybe(jElem)
 
   return jArr.pretty()
