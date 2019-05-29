@@ -20,31 +20,37 @@ proc addJsonNodeMaybe(jArr, jElem: var JsonNode) =
 proc addNestedKeyMaybe(key: string; jValue, jElem: JsonNode): JsonNode =
   var
     m: RegexMatch
-  if key.match(re"^(.*?)(\d+)$", m):
-    var
-      nestedKey = key[m.group(0)[0]]
+  if key.match(re"^(\D+)(\d+)(,(\d+))*$", m):
     let
-      nestedId = key[m.group(1)[0]]
+      nestedKey = key[m.group(0)[0]]        # "key0" -> "key", "key0,1" -> "key"
+      nestedId = key[m.group(1)[0]]         # "key0" -> "0"  , "key0,1" -> "0"
       nestedGroupKey = "nested" & nestedId
+
     # echo &"nested key = {nestedKey} | nestedId = {nestedId}"
     # echo &"dbg0: nestedGroupKey = {nestedGroupKey}"
-    # echo &"dbg1: {m.group(0)}"
-    # echo &"dbg1: {nestedGroupKey[m.group(0)[0]]}"
-    # echo &"dbg2: {m.group(1)}"
-    # echo &"dbg2: {nestedGroupKey[m.group(1)[0]]}"
-    let
-      nestedGroupKeyJNode = %* nestedGroupKey
+    # echo &"grp0: {m.group(0)}"
+    # echo &"dbg1: {key[m.group(0)[0]]}"
+    # echo &"grp1: {m.group(1)}"
+    # echo &"dbg2: {key[m.group(1)[0]]}"
+    # echo &"grp2: {m.group(2)}"
+    # echo &"dbg: key={key} | count={m.groupsCount}"
+
     if not jElem.hasKey("nested"):
       jElem["nested"] = parseJson("[]")
-    if not jElem["nested"].contains(nestedGroupKeyJNode):
-      jElem["nested"].add(nestedGroupKeyJNode)
+    if not jElem["nested"].contains(%* nestedGroupKey):
+      jElem["nested"].add(%* nestedGroupKey)
     if not jElem.hasKey(nestedGroupKey):
       jElem[nestedGroupKey] = parseJson("{}")
 
-    if nestedKey.endsWith(','):
-      nestedKey = nestedKey[0 ..< nestedKey.high]
-      # echo &"nested key 2 = {nestedKey}"
-      jElem[nestedGroupKey] = addNestedKeyMaybe(nestedKey, jValue, jElem[nestedGroupKey])
+    let
+      nestedId2 = if m.group(3).len > 0:    # "key0" -> ""   , "key0,1" -> "1"
+                    key[m.group(3)[0]]
+                  else:
+                    ""
+    # if m.group(3).len > 0:
+    #   echo &"dbg3: {key[m.group(3)[0]]}"
+    if nestedId2 != "":
+      jElem[nestedGroupKey] = addNestedKeyMaybe(nestedKey & nestedId2, jValue, jElem[nestedGroupKey])
     else:
       jElem[nestedGroupKey][nestedKey] = jValue
   else:
