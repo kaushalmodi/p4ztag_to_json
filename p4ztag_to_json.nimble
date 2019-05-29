@@ -8,4 +8,4 @@ srcDir        = "src"
 
 # Dependencies
 
-requires "nim >= 0.19.9"
+requires "nim >= 0.19.9", "regex >= 0.11.0"

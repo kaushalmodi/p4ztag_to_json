@@ -5,7 +5,9 @@
 ## * `Helix Core P4 Command Reference<https://www.perforce.com/manuals/cmdref/Content/CmdRef/Commands%20by%20Functional%20Area.html>`_
 ## * `Fun with Formatting - Perforce Blog<https://www.perforce.com/blog/fun-formatting>`_
 
-import std/[strutils, os, json]
+import std/[os, json]
+import std/strutils except replace
+import regex
 
 const
   ztagPrefix* = "... "
@@ -20,7 +22,7 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; payloadStart
   if line.startsWith(ztagPrefix):
     let
       splits = line[ztagPrefix.len .. ^1].split(' ', maxsplit=1)
-      key = splits[0]
+      key = splits[0].replace(re"\d+$", "") # Replace keys like "user0" to "user"
       value = splits[1]
     if payloadStarted:
       jArr.addJsonNodeMaybe(jElem)
