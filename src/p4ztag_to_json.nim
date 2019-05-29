@@ -5,7 +5,9 @@
 ## * `Helix Core P4 Command Reference<https://www.perforce.com/manuals/cmdref/Content/CmdRef/Commands%20by%20Functional%20Area.html>`_
 ## * `Fun with Formatting - Perforce Blog<https://www.perforce.com/blog/fun-formatting>`_
 
-import std/[os, json, strutils]
+import std/[os, json, strformat]
+import std/strutils except replace
+import regex
 
 const
   ztagPrefix* = "... "
@@ -15,36 +17,54 @@ proc addJsonNodeMaybe(jArr, jElem: var JsonNode) =
     jArr.add(jElem)   # Empty line in ztag marks the end of one record
     jElem = parseJson("{}") # Reset jElem to be an empty node
 
+proc addNestedKeyMaybe(key: string; jValue, jElem: JsonNode): JsonNode =
+  var
+    m: RegexMatch
+  if key.match(re"^(.*?)(\d+)$", m):
+    var
+      nestedKey = key[m.group(0)[0]]
+    let
+      nestedId = key[m.group(1)[0]]
+      nestedGroupKey = "nested" & nestedId
+    # echo &"nested key = {nestedKey} | nestedId = {nestedId}"
+    # echo &"dbg0: nestedGroupKey = {nestedGroupKey}"
+    # echo &"dbg1: {m.group(0)}"
+    # echo &"dbg1: {nestedGroupKey[m.group(0)[0]]}"
+    # echo &"dbg2: {m.group(1)}"
+    # echo &"dbg2: {nestedGroupKey[m.group(1)[0]]}"
+    let
+      nestedGroupKeyJNode = %* nestedGroupKey
+    if not jElem.hasKey("nested"):
+      jElem["nested"] = parseJson("[]")
+    if not jElem["nested"].contains(nestedGroupKeyJNode):
+      jElem["nested"].add(nestedGroupKeyJNode)
+    if not jElem.hasKey(nestedGroupKey):
+      jElem[nestedGroupKey] = parseJson("{}")
+
+    if nestedKey.endsWith(','):
+      nestedKey = nestedKey[0 ..< nestedKey.high]
+      # echo &"nested key 2 = {nestedKey}"
+      jElem[nestedGroupKey] = addNestedKeyMaybe(nestedKey, jValue, jElem[nestedGroupKey])
+    else:
+      jElem[nestedGroupKey][nestedKey] = jValue
+  else:
+    jElem[key] = jValue
+  return jElem
+
 proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; payloadStarted: var bool) =
   # echo line & $payloadStarted
   if line.startsWith(ztagPrefix):
     let
       splits = line[ztagPrefix.len .. ^1].split(' ', maxsplit=1)
+      key = splits[0]
       value = splits[1]
       valueJNode = %* value
-    var
-      key = splits[0]
+
     if payloadStarted:
       jArr.addJsonNodeMaybe(jElem)
       payloadStarted = false
-    if key.contains(','):
-      let
-        keyParts = key.split(',')
-      doAssert keyParts.len == 2 # We don't support keys with more than one comma right now
-      let
-        keySub = keyParts[0]
-      key = "nested" & keyParts[1]
-      let
-        keyJNode = %* key
-      if not jElem.hasKey("nested"):
-        jElem["nested"] = parseJson("[]")
-      if not jElem["nested"].contains(keyJNode):
-        jElem["nested"].add(keyJNode)
-      if not jElem.hasKey(key):
-        jElem[key] = parseJson("{}")
-      jElem[key][keySub] = valueJNode
-    else:
-      jElem[key] = valueJNode
+
+    jElem = addNestedKeyMaybe(key, valueJNode, jElem)
   else:
     payloadStarted = true
     if not jElem.hasKey("payload"):
