@@ -19,7 +19,7 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; payloadStart
   # echo line & $payloadStarted
   if line.startsWith(ztagPrefix):
     let
-      splits = line[ztagPrefix.len .. ^1].split(' ', maxsplit=2)
+      splits = line[ztagPrefix.len .. ^1].split(' ', maxsplit=1)
       key = splits[0]
       value = splits[1]
     if payloadStarted:
