@@ -5,9 +5,7 @@
 ## * `Helix Core P4 Command Reference<https://www.perforce.com/manuals/cmdref/Content/CmdRef/Commands%20by%20Functional%20Area.html>`_
 ## * `Fun with Formatting - Perforce Blog<https://www.perforce.com/blog/fun-formatting>`_
 
-import std/[os, json]
-import std/strutils except replace
-import regex
+import std/[os, json, strutils]
 
 const
   ztagPrefix* = "... "
@@ -34,7 +32,7 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; payloadStart
         keyParts = key.split(',')
       doAssert keyParts.len == 2 # We don't support keys with more than one comma right now
       let
-        keySub = keyParts[0].replace(re"\d+$", "") # Replace keys like "user0" to "user"
+        keySub = keyParts[0]
       key = "nested" & keyParts[1]
       let
         keyJNode = %* key
@@ -46,7 +44,6 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; payloadStart
         jElem[key] = parseJson("{}")
       jElem[key][keySub] = valueJNode
     else:
-      key = key.replace(re"\d+$", "") # Replace keys like "user0" to "user"
       jElem[key] = valueJNode
   else:
     payloadStarted = true
