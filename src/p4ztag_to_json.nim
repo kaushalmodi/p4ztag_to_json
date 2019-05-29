@@ -22,12 +22,32 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; payloadStart
   if line.startsWith(ztagPrefix):
     let
       splits = line[ztagPrefix.len .. ^1].split(' ', maxsplit=1)
-      key = splits[0].replace(re"\d+$", "") # Replace keys like "user0" to "user"
       value = splits[1]
+      valueJNode = %* value
+    var
+      key = splits[0]
     if payloadStarted:
       jArr.addJsonNodeMaybe(jElem)
       payloadStarted = false
-    jElem[key] = %* value
+    if key.contains(','):
+      let
+        keyParts = key.split(',')
+      doAssert keyParts.len == 2 # We don't support keys with more than one comma right now
+      let
+        keySub = keyParts[0].replace(re"\d+$", "") # Replace keys like "user0" to "user"
+      key = "nested" & keyParts[1]
+      let
+        keyJNode = %* key
+      if not jElem.hasKey("nested"):
+        jElem["nested"] = parseJson("[]")
+      if not jElem["nested"].contains(keyJNode):
+        jElem["nested"].add(keyJNode)
+      if not jElem.hasKey(key):
+        jElem[key] = parseJson("{}")
+      jElem[key][keySub] = valueJNode
+    else:
+      key = key.replace(re"\d+$", "") # Replace keys like "user0" to "user"
+      jElem[key] = valueJNode
   else:
     payloadStarted = true
     if not jElem.hasKey("payload"):
