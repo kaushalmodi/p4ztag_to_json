@@ -22,7 +22,6 @@ type
   MetaData = object
     lineNum: int
     prevKeyid: KeyId
-    prevLineKey: string
     lastSeenKey: string
     startNewElemMaybe: bool
 
@@ -105,10 +104,11 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
 
     jElem = addNestedKeyMaybe(keyid, valueJNode, jElem, meta)
     meta.prevKeyid = keyid
-    meta.prevLineKey = keyid.key
     meta.lastSeenKey = keyid.key
   else:
     meta.startNewElemMaybe = true
+    meta.prevKeyid.key = ""
+
     when defined(debug):
       echo "jElem = ", jElem.pretty
     if line.len() > 0:
@@ -126,8 +126,6 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
           existingVal = jElem[meta.lastSeenKey].getStr()
         jElem[meta.lastSeenKey] = %* (existingVal & "\n" & line)
 
-  if not line.startsWith(ztagPrefix):
-    meta.prevLineKey = ""
   when defined(debug):
     echo &"startNewElemMaybe (after) = {meta.startNewElemMaybe}"
 
@@ -138,7 +136,6 @@ proc ztagFileToJson*(filename: string) =
     jElem = parseJson("{}")     # Initialize JsonNode array element
     meta = MetaData(lineNum: 1,
                     prevKeyid: ("", -1, "", -1, ""),
-                    prevLineKey: "",
                     startNewElemMaybe: false)
 
   for line in filename.lines:
@@ -177,7 +174,6 @@ proc ztagStringToJson*(ztag: string): string =
     jArr = parseJson("[]")      # Initialize JsonNode array
     jElem = parseJson("{}")     # Initialize JsonNode array element
     meta = MetaData(prevKeyid: ("", -1, "", -1, ""),
-                    prevLineKey: "",
                     startNewElemMaybe: false)
 
   for line in ztag.splitLines():
