@@ -5,6 +5,7 @@ author        = "Kaushal Modi"
 description   = "Convert Helix Version Control / Perforce (p4) -ztag output to JSON"
 license       = "MIT"
 srcDir        = "src"
+bin           = @["p4ztag_to_json"]
 
 # Dependencies
 

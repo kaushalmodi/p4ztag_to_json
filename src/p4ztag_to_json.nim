@@ -129,8 +129,8 @@ proc ztagStringToJson*(ztag: string): string =
   return jArr.pretty()
 
 when isMainModule:
-  const
-    cwd = currentSourcePath.parentDir()
-    sampleZtagFile = cwd / ".." / "tests" / "sample.ztag"
-  ztagFileToJson(sampleZtagFile)
-  echo readFile(sampleZtagFile).ztagStringToJson()
+  let
+    numFiles = paramCount()
+    files = commandLineParams()
+  for n in 0 ..< numFiles:
+    ztagFileToJson(files[n])
