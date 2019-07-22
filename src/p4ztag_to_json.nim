@@ -114,7 +114,7 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
 
     when defined(debug):
       echo "jElem = ", jElem.pretty
-    if line.len() > 0:
+    if line.len() > 0 and meta.lastSeenKey != "":
       if meta.prevKeyid.id >= 0:
         if meta.prevKeyid.id2 >= 0:
           let
