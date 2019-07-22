@@ -12,12 +12,20 @@ import regex
 const
   ztagPrefix* = "... "
 
+type
+  MetaData = object
+    lineNum: int
+    prevLineKey: string
+    payloadStarted: bool
+
 proc addJsonNodeMaybe(jArr, jElem: var JsonNode) =
+  ## Add jElem to JSON array jArr and reset jElem to an empty node.
+  ## Do this only if jElem is non-empty.
   if jElem.len > 0:
     jArr.add(jElem)   # Empty line in ztag marks the end of one record
     jElem = parseJson("{}") # Reset jElem to be an empty node
 
-proc addNestedKeyMaybe(key: string; jValue, jElem: JsonNode): JsonNode =
+proc addNestedKeyMaybe(key: string; jValue, jElem: JsonNode; meta: var MetaData): JsonNode =
   var
     m: RegexMatch
   if key.match(re"^(\D+)(\d+)(,(\d+))*$", m):
@@ -26,7 +34,9 @@ proc addNestedKeyMaybe(key: string; jValue, jElem: JsonNode): JsonNode =
       nestedId = key[m.group(1)[0]]         # "key0" -> "0"  , "key0,1" -> "0"
       nestedGroupKey = "nested" & nestedId
 
-    # echo &"nested key = {nestedKey} | nestedId = {nestedId}"
+    meta.prevLineKey = nestedKey
+    when defined(debug):
+      echo &"nested key = {nestedKey} | nestedId = {nestedId}"
     # echo &"dbg0: nestedGroupKey = {nestedGroupKey}"
     # echo &"grp0: {m.group(0)}"
     # echo &"dbg1: {key[m.group(0)[0]]}"
@@ -50,15 +60,17 @@ proc addNestedKeyMaybe(key: string; jValue, jElem: JsonNode): JsonNode =
     # if m.group(3).len > 0:
     #   echo &"dbg3: {key[m.group(3)[0]]}"
     if nestedId2 != "":
-      jElem[nestedGroupKey] = addNestedKeyMaybe(nestedKey & nestedId2, jValue, jElem[nestedGroupKey])
+      jElem[nestedGroupKey] = addNestedKeyMaybe(nestedKey & nestedId2, jValue, jElem[nestedGroupKey], meta)
     else:
       jElem[nestedGroupKey][nestedKey] = jValue
   else:
     jElem[key] = jValue
+    meta.prevLineKey = key
   return jElem
 
-proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; payloadStarted: var bool) =
-  # echo line & $payloadStarted
+proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var MetaData) =
+  when defined(debug):
+    echo &"payloadStarted (before) = {meta.payloadStarted}, line.len = {line.len}, prevLineKey = {meta.prevLineKey}"
   if line.startsWith(ztagPrefix):
     let
       splits = line[ztagPrefix.len .. ^1].split(' ', maxsplit=1)
@@ -66,13 +78,21 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; payloadStart
       value = splits[1]
       valueJNode = %* value
 
-    if payloadStarted:
+    if meta.payloadStarted:
       jArr.addJsonNodeMaybe(jElem)
-      payloadStarted = false
+      meta.payloadStarted = false
 
-    jElem = addNestedKeyMaybe(key, valueJNode, jElem)
+    jElem = addNestedKeyMaybe(key, valueJNode, jElem, meta)
+  elif line.len == 0 and meta.prevLineKey == "desc":
+    # Handle this special case:
+    # ... depotFile //mjo/hoskh/lu/FOGIR/alrtlu/lhq_pbhid_qgyoe/cyc.tfyde.enwuuvufdf
+    # ... rev0 3
+    # ... desc0 Clfpfqm cnq pcljoc dtvsa dnvrgocju pdgbvnbmya
+    #
+    # ... rev1 4
+    meta.payloadStarted = false
   else:
-    payloadStarted = true
+    meta.payloadStarted = true
     if not jElem.hasKey("payload"):
       if line.len > 0:
         jElem["payload"] = %* line
@@ -80,16 +100,25 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; payloadStart
       let
         existingPayload = jElem["payload"].getStr()
       jElem["payload"] = %* (existingPayload & "\n" & line)
+  if not line.startsWith(ztagPrefix):
+    meta.prevLineKey = ""
+  when defined(debug):
+    echo &"payloadStarted (after) = {meta.payloadStarted}"
 
 proc ztagFileToJson*(filename: string) =
   ## Read input ztag file and convert/write to a JSON file.
   var
     jArr = parseJson("[]")      # Initialize JsonNode array
     jElem = parseJson("{}")     # Initialize JsonNode array element
-    payloadStarted = false
+    meta = MetaData(lineNum: 1,
+                    prevLineKey: "",
+                    payloadStarted: false)
 
   for line in filename.lines:
-    convertZtagLineToJson(line, jElem, jArr, payloadStarted)
+    when defined(debug):
+      echo &"[{meta.lineNum}] {line}"
+    convertZtagLineToJson(line, jElem, jArr, meta)
+    meta.lineNum += 1
   jArr.addJsonNodeMaybe(jElem)
   # echo jArr.pretty()
 
@@ -120,10 +149,11 @@ proc ztagStringToJson*(ztag: string): string =
   var
     jArr = parseJson("[]")      # Initialize JsonNode array
     jElem = parseJson("{}")     # Initialize JsonNode array element
-    payloadStarted = false
+    meta = MetaData(prevLineKey: "",
+                    payloadStarted: false)
 
   for line in ztag.splitLines():
-    convertZtagLineToJson(line, jElem, jArr, payloadStarted)
+    convertZtagLineToJson(line, jElem, jArr, meta)
   jArr.addJsonNodeMaybe(jElem)
 
   return jArr.pretty()
