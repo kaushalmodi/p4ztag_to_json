@@ -24,7 +24,7 @@ type
     prevKeyid: KeyId
     prevLineKey: string
     lastSeenKey: string
-    payloadStarted: bool
+    startNewElemMaybe: bool
 
 proc addJsonNodeMaybe(jArr, jElem: var JsonNode) =
   ## Add jElem to JSON array jArr and reset jElem to an empty node.
@@ -99,16 +99,16 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
     when defined(debug):
       echo &"current line keyid = {keyid}"
 
-    if meta.payloadStarted and keyid.id <= meta.prevKeyid.id:
+    if meta.startNewElemMaybe and keyid.id <= meta.prevKeyid.id:
       jArr.addJsonNodeMaybe(jElem)
-      meta.payloadStarted = false
+      meta.startNewElemMaybe = false
 
     jElem = addNestedKeyMaybe(keyid, valueJNode, jElem, meta)
     meta.prevKeyid = keyid
     meta.prevLineKey = keyid.key
     meta.lastSeenKey = keyid.key
   else:
-    meta.payloadStarted = true
+    meta.startNewElemMaybe = true
     when defined(debug):
       echo "jElem = ", jElem.pretty
     if line.len() > 0:
@@ -129,7 +129,7 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
   if not line.startsWith(ztagPrefix):
     meta.prevLineKey = ""
   when defined(debug):
-    echo &"payloadStarted (after) = {meta.payloadStarted}"
+    echo &"startNewElemMaybe (after) = {meta.startNewElemMaybe}"
 
 proc ztagFileToJson*(filename: string) =
   ## Read input ztag file and convert/write to a JSON file.
@@ -139,7 +139,7 @@ proc ztagFileToJson*(filename: string) =
     meta = MetaData(lineNum: 1,
                     prevKeyid: ("", -1, "", -1, ""),
                     prevLineKey: "",
-                    payloadStarted: false)
+                    startNewElemMaybe: false)
 
   for line in filename.lines:
     when defined(debug):
@@ -178,7 +178,7 @@ proc ztagStringToJson*(ztag: string): string =
     jElem = parseJson("{}")     # Initialize JsonNode array element
     meta = MetaData(prevKeyid: ("", -1, "", -1, ""),
                     prevLineKey: "",
-                    payloadStarted: false)
+                    startNewElemMaybe: false)
 
   for line in ztag.splitLines():
     convertZtagLineToJson(line, jElem, jArr, meta)
