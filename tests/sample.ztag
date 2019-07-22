@@ -9,10 +9,10 @@
 ... client ws:vwx:def.yz:0680383b
 ... desc something something something 1
 
-payload of first record1
+continued description of first record1
 
-payload of first record2
-payload of first record3
+continued description of first record2
+continued description of first record3
 ... depotFile //abc/def/ghi/TRUNK/jkl/mno/PQR.STU
 ... clientFile //ws:vwx:def.yz:6824560b/ghi/jkl/mno/PQR.STU
 ... rev 1
@@ -24,10 +24,10 @@ payload of first record3
 ... client ws:vwx:def.yz:8464768b
 ... desc something something something 100
 
-payload of second record1
+continued description of second record1
 
-payload of second record2
-payload of second record3
+continued description of second record2
+continued description of second record3
 
 ... abc d/e/f
 ... ghi 1.2.3
@@ -35,9 +35,11 @@ payload of second record3
 ... abc j:k:l
 ... mno 456.789
 
+... depotFile //yfh/xcjid/mv/WNGMX/lais/plo/nnghhhu/tt_fkruqq.bh
 ... abc0 p:q:r
 ... mno0 01234.56789
 
+... depotFile //nwd/xxoev/ud/MWCOF/awha/yli/wfwvheq/wl_gycabm.cs
 ... desc0 yqx bry.nftuu uppekxidy
 ... how0,0 tocin wknd
 ... file0,0 //stg/pgrty/qi/OKJBE/opnn/rc/jub.fhwtx.pnlxah

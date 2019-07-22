@@ -9,7 +9,7 @@
     "type": "text",
     "user": "vwx",
     "client": "ws:vwx:def.yz:0680383b",
-    "desc": "something something something 1\npayload of first record1\npayload of first record2\npayload of first record3"
+    "desc": "something something something 1\ncontinued description of first record1\ncontinued description of first record2\ncontinued description of first record3"
   },
   {
     "depotFile": "//abc/def/ghi/TRUNK/jkl/mno/PQR.STU",
@@ -21,7 +21,7 @@
     "type": "text",
     "user": "vwx",
     "client": "ws:vwx:def.yz:8464768b",
-    "desc": "something something something 100\npayload of second record1\npayload of second record2\npayload of second record3"
+    "desc": "something something something 100\ncontinued description of second record1\ncontinued description of second record2\ncontinued description of second record3"
   },
   {
     "abc": "d/e/f",
@@ -32,6 +32,7 @@
     "mno": "456.789"
   },
   {
+    "depotFile": "//yfh/xcjid/mv/WNGMX/lais/plo/nnghhhu/tt_fkruqq.bh",
     "nested": [
       "nested0"
     ],
@@ -41,6 +42,7 @@
     }
   },
   {
+    "depotFile": "//nwd/xxoev/ud/MWCOF/awha/yli/wfwvheq/wl_gycabm.cs",
     "nested": [
       "nested0"
     ],
