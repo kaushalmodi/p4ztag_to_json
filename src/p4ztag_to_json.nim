@@ -25,12 +25,16 @@ type
     lastSeenKey: string
     startNewElemMaybe: bool
 
-proc addJsonNodeMaybe(jArr, jElem: var JsonNode) =
+proc addJsonNodeMaybe(jArr, jElem: var JsonNode; meta: var MetaData) =
   ## Add jElem to JSON array jArr and reset jElem to an empty node.
   ## Do this only if jElem is non-empty.
   if jElem.len > 0:
     jArr.add(jElem)   # Empty line in ztag marks the end of one record
     jElem = parseJson("{}") # Reset jElem to be an empty node
+
+  # Now that a new JSON element was added if non-empty, clear the
+  # startNewElemMaybe flag.
+  meta.startNewElemMaybe = false
 
 proc getKeyId(key: string): KeyId =
   const
@@ -99,8 +103,7 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
       echo &"current line keyid = {keyid}"
 
     if meta.startNewElemMaybe and keyid.id <= meta.prevKeyid.id:
-      jArr.addJsonNodeMaybe(jElem)
-      meta.startNewElemMaybe = false
+      jArr.addJsonNodeMaybe(jElem, meta)
 
     jElem = addNestedKeyMaybe(keyid, valueJNode, jElem, meta)
     meta.prevKeyid = keyid
@@ -143,7 +146,7 @@ proc ztagFileToJson*(filename: string) =
       echo &"\n[{meta.lineNum}] {line}"
     convertZtagLineToJson(line, jElem, jArr, meta)
     meta.lineNum += 1
-  jArr.addJsonNodeMaybe(jElem)
+  jArr.addJsonNodeMaybe(jElem, meta)
   # echo jArr.pretty()
 
   changeFileExt(filename, "json").writeFile(jArr.pretty)
@@ -178,7 +181,7 @@ proc ztagStringToJson*(ztag: string): string =
 
   for line in ztag.splitLines():
     convertZtagLineToJson(line, jElem, jArr, meta)
-  jArr.addJsonNodeMaybe(jElem)
+  jArr.addJsonNodeMaybe(jElem, meta)
 
   return jArr.pretty()
 
