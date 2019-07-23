@@ -46,3 +46,6 @@ suite "ztag to json":
 
   test "basic test for one-level nesting":
     doCheck("one_level_nesting")
+
+  test "test for two-level nesting":
+    doCheck("two_level_nesting")
