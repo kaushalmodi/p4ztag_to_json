@@ -76,11 +76,11 @@ proc updateJElem(keyid: KeyId; jValue, jElem: JsonNode; meta: var MetaData): Jso
   ## element in that.
   if keyid.id >= 0:
     if not jElem.hasKey("nested"):
-      jElem["nested"] = parseJson("[]")
+      jElem["nested"] = %* []
     if not jElem["nested"].contains(%* keyid.nestedGroupKey):
       jElem["nested"].add(%* keyid.nestedGroupKey)
     if not jElem.hasKey(keyid.nestedGroupKey):
-      jElem[keyid.nestedGroupKey] = parseJson("{}")
+      jElem[keyid.nestedGroupKey] = %* {}
 
     if keyid.id2 >= 0:
       let
