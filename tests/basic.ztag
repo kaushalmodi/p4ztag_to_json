@@ -13,6 +13,8 @@ continued description of first record1
 
 continued description of first record2
 continued description of first record3
+... nondesckey something 1
+
 ... depotFile //abc/def/ghi/TRUNK/jkl/mno/PQR.STU
 ... clientFile //ws:vwx:def.yz:6824560b/ghi/jkl/mno/PQR.STU
 ... rev 1
@@ -28,6 +30,7 @@ continued description of second record1
 
 continued description of second record2
 continued description of second record3
+... nondesckey something 2
 
 ... abc d/e/f
 ... ghi 1.2.3

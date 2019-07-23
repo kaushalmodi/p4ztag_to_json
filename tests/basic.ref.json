@@ -9,7 +9,8 @@
     "type": "text",
     "user": "vwx",
     "client": "ws:vwx:def.yz:0680383b",
-    "desc": "something something something 1\ncontinued description of first record1\ncontinued description of first record2\ncontinued description of first record3"
+    "desc": "something something something 1\ncontinued description of first record1\ncontinued description of first record2\ncontinued description of first record3",
+    "nondesckey": "something 1"
   },
   {
     "depotFile": "//abc/def/ghi/TRUNK/jkl/mno/PQR.STU",
@@ -21,7 +22,8 @@
     "type": "text",
     "user": "vwx",
     "client": "ws:vwx:def.yz:8464768b",
-    "desc": "something something something 100\ncontinued description of second record1\ncontinued description of second record2\ncontinued description of second record3"
+    "desc": "something something something 100\ncontinued description of second record1\ncontinued description of second record2\ncontinued description of second record3",
+    "nondesckey": "something 2"
   },
   {
     "abc": "d/e/f",
