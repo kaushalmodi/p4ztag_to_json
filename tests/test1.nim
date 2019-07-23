@@ -23,6 +23,9 @@ template doCheck(name: string) =
 
 suite "ztag to json":
 
+  test "case where no valid ztag record is present (like when p4 sync doesn't have anything to update)":
+    doCheck("no_valid_record")
+
   test "basic":
     doCheck("basic")
 
