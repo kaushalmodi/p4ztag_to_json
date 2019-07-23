@@ -176,11 +176,15 @@ proc ztagStringToJson*(ztag: string): string =
   var
     jArr = parseJson("[]")      # Initialize JsonNode array
     jElem = parseJson("{}")     # Initialize JsonNode array element
-    meta = MetaData(prevKeyid: ("", -1, "", -1, ""),
+    meta = MetaData(lineNum: 1,
+                    prevKeyid: ("", -1, "", -1, ""),
                     startNewElemMaybe: false)
 
   for line in ztag.splitLines():
+    when defined(debug):
+      echo &"\n[{meta.lineNum}] {line}"
     convertZtagLineToJson(line, jElem, jArr, meta)
+    meta.lineNum += 1
   jArr.addJsonNodeMaybe(jElem, meta)
 
   return jArr.pretty()
