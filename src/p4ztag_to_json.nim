@@ -104,7 +104,8 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
 
     if meta.startNewElemMaybe and
        meta.prevKeyid.key == "" and
-       meta.lastSeenKey != "desc":
+       (meta.lastSeenKey != "desc" or
+         (meta.lastSeenKey == "desc" and keyid.id <= meta.prevKeyid.id)):
       jArr.addJsonNodeMaybe(jElem, meta)
 
     jElem = addNestedKeyMaybe(keyid, valueJNode, jElem, meta)
@@ -112,7 +113,8 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
     meta.lastSeenKey = keyid.key
   else:
     meta.startNewElemMaybe = true
-    if line.len == 0: # blank line
+    if line.len == 0 and # blank line following a non-blank line
+       meta.prevKeyid.key != "":
       discard
     else:
       when defined(debug):
@@ -132,9 +134,6 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
             existingVal = jElem[meta.lastSeenKey].getStr()
           jElem[meta.lastSeenKey] = %* (existingVal & "\n" & line)
     meta.prevKeyid.key = ""
-
-  when defined(debug):
-    echo &"startNewElemMaybe (after) = {meta.startNewElemMaybe}"
 
 proc ztagFileToJson*(filename: string) =
   ## Read input ztag file and convert/write to a JSON file.
