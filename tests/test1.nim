@@ -20,3 +20,6 @@ suite "ztag to json":
 
   test "basic":
     doCheck("basic")
+
+  test "check that a new record is created after a blank line":
+    doCheck("newline_record_break")
