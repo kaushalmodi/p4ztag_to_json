@@ -55,3 +55,6 @@ suite "ztag to json":
 
   test "ignore ztag comments":
     doCheck("ztag_comment")
+
+  test "add test for an output of 'p4 filelog -l'":
+    doCheck("p4_filelog_long_desc")

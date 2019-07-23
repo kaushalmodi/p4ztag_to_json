@@ -107,7 +107,8 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
 
     if meta.startNewElemMaybe and
        meta.prevKeyid.key == "" and
-       keyid.id <= meta.prevKeyid.id:
+       keyid.id <= meta.prevKeyid.id and
+       (keyid.id == meta.prevKeyid.id and keyid.id2 <= meta.prevKeyid.id2):
       jArr.addJsonNodeMaybe(jElem, meta)
 
     jElem = addNestedKeyMaybe(keyid, valueJNode, jElem, meta)
