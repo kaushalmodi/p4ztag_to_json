@@ -77,22 +77,26 @@ proc updateJArr(jArr, jElem: var JsonNode; meta: var MetaData) =
 proc updateJElem(keyid: KeyId; jValue, jElem: JsonNode; meta: var MetaData): JsonNode =
   ## Assign value to a key directly in ``jElem`` or to a nested
   ## element in that.
-  if keyid.id >= 0:
-    if not jElem.hasKey("nested"):
-      jElem["nested"] = %* []
-    if not jElem["nested"].contains(%* keyid.nestedGroupKey):
-      jElem["nested"].add(%* keyid.nestedGroupKey)
-    if not jElem.hasKey(keyid.nestedGroupKey):
-      jElem[keyid.nestedGroupKey] = %* {}
-
-    if keyid.id2 >= 0:
-      let
-        keyid2 = getKeyId(keyid.key & $keyid.id2)
-      jElem[keyid.nestedGroupKey] = updateJElem(keyid2, jValue, jElem[keyid.nestedGroupKey], meta)
-    else:
-      jElem[keyid.nestedGroupKey][keyid.key] = jValue
-  else:
+  if keyid.id == -1: # top level element
     jElem[keyid.key] = jValue
+    return jElem
+
+  # first or higher level nesting
+  if not jElem.hasKey("nested"):
+    jElem["nested"] = %* []
+  if not jElem["nested"].contains(%* keyid.nestedGroupKey):
+    jElem["nested"].add(%* keyid.nestedGroupKey)
+  if not jElem.hasKey(keyid.nestedGroupKey):
+    jElem[keyid.nestedGroupKey] = %* {}
+
+  if keyid.id2 == -1: # no second-level nesting
+    jElem[keyid.nestedGroupKey][keyid.key] = jValue
+    return jElem
+
+  # second or higher level nesting
+  let
+    keyid2 = getKeyId(keyid.key & $keyid.id2)
+  jElem[keyid.nestedGroupKey] = updateJElem(keyid2, jValue, jElem[keyid.nestedGroupKey], meta)
   return jElem
 
 proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var MetaData) =
