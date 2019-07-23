@@ -14,7 +14,7 @@ const
   ztagCommentPrefix* = "#... "
 
 type
-  KeyId = tuple
+  KeyId = object
     key: string
     id: int
     nestedGroupKey: string
@@ -27,6 +27,11 @@ type
     startNewElemMaybe: bool
 
 proc getKeyId(key: string): KeyId =
+  result = KeyId(key: key,
+                 id: -1,
+                 nestedGroupKey: "",
+                 id2: -1,
+                 nestedGroupKey2: "")
   const
     nestedPrefix = "nested"
   var
@@ -56,8 +61,6 @@ proc getKeyId(key: string): KeyId =
       if m.group(3).len > 0:
         echo &"dbg3: {key[m.group(3)[0]]}"
       echo &"[getKeyId] result = {result}"
-  else:
-    result = (key, -1, "", -1, "")
 
 proc updateJArr(jArr, jElem: var JsonNode; meta: var MetaData) =
   ## Add ``jElem`` to JSON array ``jArr``.
@@ -148,7 +151,11 @@ template populateJArr(iter: untyped) {.dirty.} =
     jArr = newJArray() # Initialize JsonNode array
     jElem = newJObject() # Initialize JsonNode array element/object
     meta = MetaData(lineNum: 1,
-                    prevKeyid: ("", -1, "", -1, ""),
+                    prevKeyid: KeyId(key: "",
+                                     id: -1,
+                                     nestedGroupKey: "",
+                                     id2: -1,
+                                     nestedGroupKey2: ""),
                     startNewElemMaybe: false)
 
   for line in iter:
