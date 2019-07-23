@@ -26,17 +26,6 @@ type
     lastSeenKey: string
     startNewElemMaybe: bool
 
-proc addJsonNodeMaybe(jArr, jElem: var JsonNode; meta: var MetaData) =
-  ## Add jElem to JSON array jArr and reset jElem to an empty node.
-  ## Do this only if jElem is non-empty.
-  if jElem.len > 0:
-    jArr.add(jElem)   # Empty line in ztag marks the end of one record
-    jElem = parseJson("{}") # Reset jElem to be an empty node
-
-  # Now that a new JSON element was added if non-empty, clear the
-  # startNewElemMaybe flag.
-  meta.startNewElemMaybe = false
-
 proc getKeyId(key: string): KeyId =
   const
     nestedPrefix = "nested"
@@ -70,7 +59,21 @@ proc getKeyId(key: string): KeyId =
   else:
     result = (key, -1, "", -1, "")
 
-proc addNestedKeyMaybe(keyid: KeyId; jValue, jElem: JsonNode; meta: var MetaData): JsonNode =
+proc updateJArr(jArr, jElem: var JsonNode; meta: var MetaData) =
+  ## Add ``jElem`` to JSON array ``jArr``.
+  ## Do this only if ``jElem`` is non-empty.
+  ## Reset ``jElem`` to an empty node after that.
+  if jElem.len > 0:
+    jArr.add(jElem)  # Empty line in ztag marks the end of one record.
+    jElem = %* {} # Reset jElem to be an empty node now.
+
+  # Now that a new JSON element was added if non-empty, clear the
+  # startNewElemMaybe flag.
+  meta.startNewElemMaybe = false
+
+proc updateJElem(keyid: KeyId; jValue, jElem: JsonNode; meta: var MetaData): JsonNode =
+  ## Assign value to a key directly in ``jElem`` or to a nested
+  ## element in that.
   if keyid.id >= 0:
     if not jElem.hasKey("nested"):
       jElem["nested"] = parseJson("[]")
@@ -82,7 +85,7 @@ proc addNestedKeyMaybe(keyid: KeyId; jValue, jElem: JsonNode; meta: var MetaData
     if keyid.id2 >= 0:
       let
         keyid2 = getKeyId(keyid.key & $keyid.id2)
-      jElem[keyid.nestedGroupKey] = addNestedKeyMaybe(keyid2, jValue, jElem[keyid.nestedGroupKey], meta)
+      jElem[keyid.nestedGroupKey] = updateJElem(keyid2, jValue, jElem[keyid.nestedGroupKey], meta)
     else:
       jElem[keyid.nestedGroupKey][keyid.key] = jValue
   else:
@@ -90,6 +93,9 @@ proc addNestedKeyMaybe(keyid: KeyId; jValue, jElem: JsonNode; meta: var MetaData
   return jElem
 
 proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var MetaData) =
+  ## Convert the single ztag line to JSON object.
+  ## Data is first set in single JSON elements (``jElem``) and then that
+  ## element is added to a JSON array (``jArr``).
   when defined(debug):
     echo &"line.len = {line.len}, meta = {meta}"
   if line.startsWith(ztagCommentPrefix):
@@ -109,9 +115,9 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
        meta.prevKeyid.key == "" and
        keyid.id <= meta.prevKeyid.id and
        (keyid.id == meta.prevKeyid.id and keyid.id2 <= meta.prevKeyid.id2):
-      jArr.addJsonNodeMaybe(jElem, meta)
+      jArr.updateJArr(jElem, meta)
 
-    jElem = addNestedKeyMaybe(keyid, valueJNode, jElem, meta)
+    jElem = updateJElem(keyid, valueJNode, jElem, meta)
     meta.prevKeyid = keyid
     meta.lastSeenKey = keyid.key
   else:
@@ -150,7 +156,7 @@ template populateJArr(iter: untyped) {.dirty.} =
       echo &"\n[{meta.lineNum}] {line}"
     convertZtagLineToJson(line, jElem, jArr, meta)
     meta.lineNum += 1
-  jArr.addJsonNodeMaybe(jElem, meta)
+  jArr.updateJArr(jElem, meta)
 
 proc ztagFileToJson*(filename: string) =
   ## Read input ztag file and convert/write to a JSON file.
