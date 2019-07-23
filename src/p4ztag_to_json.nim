@@ -102,7 +102,9 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
     when defined(debug):
       echo &"current line keyid = {keyid}"
 
-    if meta.startNewElemMaybe and keyid.id <= meta.prevKeyid.id:
+    if meta.startNewElemMaybe and
+       meta.prevKeyid.key == "" and
+       meta.lastSeenKey != "desc":
       jArr.addJsonNodeMaybe(jElem, meta)
 
     jElem = addNestedKeyMaybe(keyid, valueJNode, jElem, meta)
@@ -110,24 +112,26 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
     meta.lastSeenKey = keyid.key
   else:
     meta.startNewElemMaybe = true
-    meta.prevKeyid.key = ""
-
-    when defined(debug):
-      echo "jElem = ", jElem.pretty
-    if line.len() > 0 and meta.lastSeenKey != "":
-      if meta.prevKeyid.id >= 0:
-        if meta.prevKeyid.id2 >= 0:
-          let
-            existingVal = jElem[meta.prevKeyid.nestedGroupKey][meta.prevKeyid.nestedGroupKey2][meta.lastSeenKey].getStr()
-          jElem[meta.prevKeyid.nestedGroupKey][meta.prevKeyid.nestedGroupKey2][meta.lastSeenKey] = %* (existingVal & "\n" & line)
+    if line.len == 0: # blank line
+      discard
+    else:
+      when defined(debug):
+        echo "jElem = ", jElem.pretty
+      if meta.lastSeenKey != "":
+        if meta.prevKeyid.id >= 0:
+          if meta.prevKeyid.id2 >= 0:
+            let
+              existingVal = jElem[meta.prevKeyid.nestedGroupKey][meta.prevKeyid.nestedGroupKey2][meta.lastSeenKey].getStr()
+            jElem[meta.prevKeyid.nestedGroupKey][meta.prevKeyid.nestedGroupKey2][meta.lastSeenKey] = %* (existingVal & "\n" & line)
+          else:
+            let
+              existingVal = jElem[meta.prevKeyid.nestedGroupKey][meta.lastSeenKey].getStr()
+            jElem[meta.prevKeyid.nestedGroupKey][meta.lastSeenKey] = %* (existingVal & "\n" & line)
         else:
           let
-            existingVal = jElem[meta.prevKeyid.nestedGroupKey][meta.lastSeenKey].getStr()
-          jElem[meta.prevKeyid.nestedGroupKey][meta.lastSeenKey] = %* (existingVal & "\n" & line)
-      else:
-        let
-          existingVal = jElem[meta.lastSeenKey].getStr()
-        jElem[meta.lastSeenKey] = %* (existingVal & "\n" & line)
+            existingVal = jElem[meta.lastSeenKey].getStr()
+          jElem[meta.lastSeenKey] = %* (existingVal & "\n" & line)
+    meta.prevKeyid.key = ""
 
   when defined(debug):
     echo &"startNewElemMaybe (after) = {meta.startNewElemMaybe}"
