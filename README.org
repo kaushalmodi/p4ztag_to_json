@@ -9,50 +9,81 @@ p4ztag_to_json <ztagfile1.foo> <ztagfile2.bar> ..
 #+end_example
 * Sample "ztag" data
 #+begin_example
-... depotFile //abc/def/ghi/TRUNK/jkl/mno/pqr.stu
-... clientFile //ws:vwx:def.yz:7434600b/ghi/jkl/mno/pqr.stu
-... rev 7
-... haveRev 3
-... action edit
-... change 568524
-... type text
-... user vwx
-... client ws:vwx:def.yz:0680383b
+... depotFile //ydf/yepba/ik/LEMHT/uopd/tr/ofvd/ai_rgl.ng
+... rev0 35
+... change0 587347
+... action0 mdlo
+... type0 rkwr
+... time0 1778604642
+... user0 vtsoq
+... client0 nq:awjyr:xrjmh.cyo:3724802i
+... fileSize0 73567
+... digest0 R008427167X2MKRE116S1Q0WFA4OP01T
+... desc0 fnny txoeb: qltuvf KNN HHJ3 gbdr ydwwcj axmdlinwff
 
-... depotFile //abc/def/ghi/TRUNK/jkl/mno/PQR.STU
-... clientFile //ws:vwx:def.yz:6824560b/ghi/jkl/mno/PQR.STU
-... rev 1
-... haveRev 6
-... action edit
-... change 085030
-... type text
-... user vwx
-... client ws:vwx:def.yz:8464768b
+- bqq_ljqujqav_ofnw   -> CCW_bv
+- nea_hswpfmas_vawxny -> WJA_ny
+- fse_hnpoqedk_jxf    -> VVM_xc
+
+... how0,0    poxhsp oilq
+... file0,0   //lwj/hfssq/tcjvrcxx/POFJK/lkucc6/ol/gudu/my/kakg/pn_doa.xq
+... srev0,0   #ddpk
+... erev0,0   #1
+... rev1 52
+... change1 111522
+... action1 myqr
+... type1 tkrt
+... time1 1332615524
+... user1 wpeun
+... client1 hu:wedwm:psspa.udl:7045580a
+... fileSize1 02622
+... digest1 6TVK8T0SV0V8PY454H374KM17AA1K43T
+... desc1 Rcrrtxhjv xgr fw_sutxg_nuifp ss ic bxm [QJM]
+
+Llkr ta c fmdikgakkl xxohgh .. fusds xfd td_jurfh_ocxji vc bny fiw ftnlfvdw, lhddefunqh wobbo eluoultw fla fnqb jb peotcc.
 #+end_example
 * Converted JSON
 #+begin_src json
 [
   {
-    "depotFile": "//abc/def/ghi/TRUNK/jkl/mno/pqr.stu",
-    "clientFile": "//ws:vwx:def.yz:7434600b/ghi/jkl/mno/pqr.stu",
-    "rev": "7",
-    "haveRev": "3",
-    "action": "edit",
-    "change": "568524",
-    "type": "text",
-    "user": "vwx",
-    "client": "ws:vwx:def.yz:0680383b"
-  },
-  {
-    "depotFile": "//abc/def/ghi/TRUNK/jkl/mno/PQR.STU",
-    "clientFile": "//ws:vwx:def.yz:6824560b/ghi/jkl/mno/PQR.STU",
-    "rev": "1",
-    "haveRev": "6",
-    "action": "edit",
-    "change": "085030",
-    "type": "text",
-    "user": "vwx",
-    "client": "ws:vwx:def.yz:8464768b"
+    "depotFile": "//ydf/yepba/ik/LEMHT/uopd/tr/ofvd/ai_rgl.ng",
+    "nested": [
+      "nested0",
+      "nested1"
+    ],
+    "nested0": {
+      "rev": "35",
+      "change": "587347",
+      "action": "mdlo",
+      "type": "rkwr",
+      "time": "1778604642",
+      "user": "vtsoq",
+      "client": "nq:awjyr:xrjmh.cyo:3724802i",
+      "fileSize": "73567",
+      "digest": "R008427167X2MKRE116S1Q0WFA4OP01T",
+      "desc": "fnny txoeb: qltuvf KNN HHJ3 gbdr ydwwcj axmdlinwff\n- bqq_ljqujqav_ofnw   -> CCW_bv\n- nea_hswpfmas_vawxny -> WJA_ny\n- fse_hnpoqedk_jxf    -> VVM_xc\n",
+      "nested": [
+        "nested0"
+      ],
+      "nested0": {
+        "how": "   poxhsp oilq",
+        "file": "  //lwj/hfssq/tcjvrcxx/POFJK/lkucc6/ol/gudu/my/kakg/pn_doa.xq",
+        "srev": "  #ddpk",
+        "erev": "  #1"
+      }
+    },
+    "nested1": {
+      "rev": "52",
+      "change": "111522",
+      "action": "myqr",
+      "type": "tkrt",
+      "time": "1332615524",
+      "user": "wpeun",
+      "client": "hu:wedwm:psspa.udl:7045580a",
+      "fileSize": "02622",
+      "digest": "6TVK8T0SV0V8PY454H374KM17AA1K43T",
+      "desc": "Rcrrtxhjv xgr fw_sutxg_nuifp ss ic bxm [QJM]\nLlkr ta c fmdikgakkl xxohgh .. fusds xfd td_jurfh_ocxji vc bny fiw ftnlfvdw, lhddefunqh wobbo eluoultw fla fnqb jb peotcc."
+    }
   }
 ]
 #+end_src
