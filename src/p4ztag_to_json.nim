@@ -180,7 +180,7 @@ proc ztagFileToJson*(filename: string) =
   populateJArr(filename.lines)
   changeFileExt(filename, "json").writeFile(jArr.pretty)
 
-proc ztagStringToJson*(ztag: string): string =
+proc ztagStringToJson*(ztagStr: string): string =
   ## Convert input ztag string to JSON.
   ##
   runnableExamples:
@@ -202,7 +202,7 @@ proc ztagStringToJson*(ztag: string): string =
 ]"""
     doAssert ztagString.ztagStringToJson() == jsonString
   ##
-  populateJArr(ztag.splitLines())
+  populateJArr(ztagStr.strip().splitLines())
   return jArr.pretty()
 
 when isMainModule:
@@ -213,7 +213,7 @@ when isMainModule:
   #   # prints the converted JSON to the stdout
   if not isatty(stdin):
     let
-      stdinData = readAll(stdin).strip()
+      stdinData = readAll(stdin)
     echo stdinData.ztagStringToJson()
   else:
     let

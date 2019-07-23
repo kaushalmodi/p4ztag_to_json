@@ -62,3 +62,6 @@ suite "ztag to json":
   test "parse non-ztag data output by p4 just before the ztag stream":
     doCheck("ztag_header")
     doCheck("ztag_header2")
+
+  test "check that the trialing blank line does not convert to a newline in json string":
+    doCheck("trailing_blank_line")
