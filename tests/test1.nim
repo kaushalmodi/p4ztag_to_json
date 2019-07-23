@@ -11,9 +11,12 @@ proc getZtagFileAndRef(name: string): tuple[ztagFile: string, refJson: string] =
     refJson = readFile(refJsonFile)
   return (ztagFile, refJson)
 
+template doCheck(name: string) =
+  let
+    (z, j) = getZtagFileAndRef(name)
+  check readFile(z).ztagStringToJson() == j
+
 suite "ztag to json":
 
   test "basic":
-    let
-      (z, j) = getZtagFileAndRef("sample")
-    check readFile(z).ztagStringToJson() == j
+    doCheck("basic")
