@@ -1,20 +1,24 @@
-import std/[unittest, os]
+import std/[unittest, os, osproc]
 import p4ztag_to_json
 
 const
   cwd = currentSourcePath.parentDir()
+  tmpDir = cwd / "tmp"
+  diffCmd = "git --no-pager diff -w --color-moved=dimmed-zebra --no-index -- "
 
-proc getZtagFileAndRef(name: string): tuple[ztagFile: string, refJson: string] =
+template doCheck(name: string) =
   let
     ztagFile = cwd / (name & ".ztag")
     refJsonFile = cwd / (name & ".ref.json")
     refJson = readFile(refJsonFile)
-  return (ztagFile, refJson)
-
-template doCheck(name: string) =
-  let
-    (z, j) = getZtagFileAndRef(name)
-  check readFile(z).ztagStringToJson() == j
+    actualJson = readFile(ztagFile).ztagStringToJson()
+    actualJsonFile = tmpDir / (name & ".actual.json")
+  if actualJson != refJson:
+    if not existsDir(tmpDir):
+      createDir(tmpDir)
+    actualJsonFile.writeFile(actualJson)
+    discard execCmd(diffCmd & refJsonFile & " " & actualJsonFile)
+  check actualJson == refJson
 
 suite "ztag to json":
 
