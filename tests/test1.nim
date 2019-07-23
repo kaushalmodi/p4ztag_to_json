@@ -37,3 +37,6 @@ suite "ztag to json":
 
   test "check nested record boundaries in a record are detected even when they don't separate by a blank line":
     doCheck("nested_records")
+
+  test "multi-line desc fields":
+    doCheck("multi_line_desc")
