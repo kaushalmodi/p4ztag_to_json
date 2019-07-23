@@ -40,3 +40,6 @@ suite "ztag to json":
 
   test "multi-line desc fields":
     doCheck("multi_line_desc")
+
+  test "consecutive records with same field names but different values":
+    doCheck("consecutive_records_same_fields")
