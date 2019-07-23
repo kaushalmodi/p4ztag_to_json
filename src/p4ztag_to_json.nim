@@ -135,23 +135,24 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
           jElem[meta.lastSeenKey] = %* (existingVal & "\n" & line)
     meta.prevKeyid.key = ""
 
-proc ztagFileToJson*(filename: string) =
-  ## Read input ztag file and convert/write to a JSON file.
+template populateJArr(iter: untyped) {.dirty.} =
   var
-    jArr = parseJson("[]")      # Initialize JsonNode array
-    jElem = parseJson("{}")     # Initialize JsonNode array element
+    jArr = newJArray() # Initialize JsonNode array
+    jElem = newJObject() # Initialize JsonNode array element/object
     meta = MetaData(lineNum: 1,
                     prevKeyid: ("", -1, "", -1, ""),
                     startNewElemMaybe: false)
 
-  for line in filename.lines:
+  for line in iter:
     when defined(debug):
       echo &"\n[{meta.lineNum}] {line}"
     convertZtagLineToJson(line, jElem, jArr, meta)
     meta.lineNum += 1
   jArr.addJsonNodeMaybe(jElem, meta)
-  # echo jArr.pretty()
 
+proc ztagFileToJson*(filename: string) =
+  ## Read input ztag file and convert/write to a JSON file.
+  populateJArr(filename.lines)
   changeFileExt(filename, "json").writeFile(jArr.pretty)
 
 proc ztagStringToJson*(ztag: string): string =
@@ -176,20 +177,7 @@ proc ztagStringToJson*(ztag: string): string =
 ]"""
     doAssert ztagString.ztagStringToJson() == jsonString
   ##
-  var
-    jArr = parseJson("[]")      # Initialize JsonNode array
-    jElem = parseJson("{}")     # Initialize JsonNode array element
-    meta = MetaData(lineNum: 1,
-                    prevKeyid: ("", -1, "", -1, ""),
-                    startNewElemMaybe: false)
-
-  for line in ztag.splitLines():
-    when defined(debug):
-      echo &"\n[{meta.lineNum}] {line}"
-    convertZtagLineToJson(line, jElem, jArr, meta)
-    meta.lineNum += 1
-  jArr.addJsonNodeMaybe(jElem, meta)
-
+  populateJArr(ztag.splitLines())
   return jArr.pretty()
 
 when isMainModule:
