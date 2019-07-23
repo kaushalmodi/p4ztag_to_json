@@ -21,40 +21,6 @@
     "type": "text",
     "user": "vwx",
     "client": "ws:vwx:def.yz:8464768b",
-    "desc": "something something something 100\ncontinued description of second record1\n\ncontinued description of second record2\ncontinued description of second record3\n"
-  },
-  {
-    "depotFile": "//liv/ivjxb/ih/ESADL/bkgq/unv/tfcskxm/yg_hunutd.kq",
-    "nested": [
-      "nested0"
-    ],
-    "nested0": {
-      "rev": "4",
-      "change": "808183",
-      "action": "ybof/kyp",
-      "type": "rcqb",
-      "time": "7514013064",
-      "user": "haocnvmws",
-      "client": "il:nyc::blbfenrcf:tltpf.hmb:r800l5id",
-      "fileSize": "4662",
-      "digest": "612J0TG540M0K72C523A383W422XWL1Q",
-      "desc": "Wgpxql/wghl bfgo(t)",
-      "nested": [
-        "nested0",
-        "nested1"
-      ],
-      "nested0": {
-        "how": "mfmjh tois",
-        "file": "//skj/mamge/ro/TFWTR/kbqj/lua/tdwikdy/ieykihd/je_oevven.mk",
-        "srev": "#rqnv",
-        "erev": "#6"
-      },
-      "nested1": {
-        "how": "xtktm xsfa",
-        "file": "//fnf/pkrqq/io/AMPLR/cwys/fkl/ekofapv/ung_ninxiv.qt",
-        "srev": "#lyrq",
-        "erev": "#6"
-      }
-    }
+    "desc": "something something something 100\ncontinued description of second record1\n\ncontinued description of second record2\ncontinued description of second record3"
   }
 ]
