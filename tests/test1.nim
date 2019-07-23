@@ -58,3 +58,6 @@ suite "ztag to json":
 
   test "add test for an output of 'p4 filelog -l'":
     doCheck("p4_filelog_long_desc")
+
+  test "parse non-ztag data output by p4 just before the ztag stream":
+    doCheck("ztag_header")

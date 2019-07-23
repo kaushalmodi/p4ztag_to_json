@@ -127,6 +127,9 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
     jElem = updateJElem(keyid, valueJNode, jElem, meta)
     meta.prevKeyid = keyid
     meta.lastSeenKey = keyid.key
+  elif meta.lastSeenKey == "": # before the first ztag key got parsed
+    jElem["message"] = %* line
+    meta.lastSeenKey = "message"
   else:
     meta.startNewElemMaybe = true
     if line.len == 0 and # blank line following a non-blank line
