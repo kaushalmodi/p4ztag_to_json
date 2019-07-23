@@ -30,3 +30,6 @@ suite "ztag to json":
 
   test "check that a new record is *not* created after a blank line after desc":
     doCheck("blank_line_after_desc")
+
+  test "check nested record boundaries in a record are detected even when they don't separate by a blank line":
+    doCheck("nested_records")
