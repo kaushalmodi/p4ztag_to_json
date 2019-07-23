@@ -23,3 +23,6 @@ suite "ztag to json":
 
   test "check that a new record is created after a blank line":
     doCheck("newline_record_break")
+
+  test "check that a new record is *not* created after a blank line after desc":
+    doCheck("blank_line_after_desc")
