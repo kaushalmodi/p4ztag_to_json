@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.9.0"
+version       = "0.9.1"
 author        = "Kaushal Modi"
 description   = "Convert Helix Version Control / Perforce (p4) -ztag output to JSON"
 license       = "MIT"
