@@ -119,23 +119,22 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
     if line.len == 0 and # blank line following a non-blank line
        meta.prevKeyid.key != "":
       discard
-    else:
+    elif meta.lastSeenKey != "":
       when defined(debug):
         echo "jElem = ", jElem.pretty
-      if meta.lastSeenKey != "":
-        if meta.prevKeyid.id >= 0:
-          if meta.prevKeyid.id2 >= 0:
-            let
-              existingVal = jElem[meta.prevKeyid.nestedGroupKey][meta.prevKeyid.nestedGroupKey2][meta.lastSeenKey].getStr()
-            jElem[meta.prevKeyid.nestedGroupKey][meta.prevKeyid.nestedGroupKey2][meta.lastSeenKey] = %* (existingVal & "\n" & line)
-          else:
-            let
-              existingVal = jElem[meta.prevKeyid.nestedGroupKey][meta.lastSeenKey].getStr()
-            jElem[meta.prevKeyid.nestedGroupKey][meta.lastSeenKey] = %* (existingVal & "\n" & line)
+      if meta.prevKeyid.id >= 0:
+        if meta.prevKeyid.id2 >= 0:
+          let
+            existingVal = jElem[meta.prevKeyid.nestedGroupKey][meta.prevKeyid.nestedGroupKey2][meta.lastSeenKey].getStr()
+          jElem[meta.prevKeyid.nestedGroupKey][meta.prevKeyid.nestedGroupKey2][meta.lastSeenKey] = %* (existingVal & "\n" & line)
         else:
           let
-            existingVal = jElem[meta.lastSeenKey].getStr()
-          jElem[meta.lastSeenKey] = %* (existingVal & "\n" & line)
+            existingVal = jElem[meta.prevKeyid.nestedGroupKey][meta.lastSeenKey].getStr()
+          jElem[meta.prevKeyid.nestedGroupKey][meta.lastSeenKey] = %* (existingVal & "\n" & line)
+      else:
+        let
+          existingVal = jElem[meta.lastSeenKey].getStr()
+        jElem[meta.lastSeenKey] = %* (existingVal & "\n" & line)
     meta.prevKeyid.key = ""
 
 template populateJArr(iter: untyped) {.dirty.} =
