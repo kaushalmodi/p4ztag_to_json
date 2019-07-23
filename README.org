@@ -3,9 +3,15 @@
 Little utility to convert the Perforce P4 "Ztag" format data to JSON.
 
 * Command line
+** Pass a ztag format text file
 #+begin_example
 p4ztag_to_json <ztagfile1.foo> <ztagfile2.bar> ..
 # Generates <ztagfile1.json> <ztagfile2.json> ..
+#+end_example
+** Pipe output of a ~p4 -ztag ..~ command to ~p4ztag_to_json~
+#+begin_example
+p4 -ztag info | p4ztag_to_json
+# Prints JSONified version of that input to stdout
 #+end_example
 * Sample "ztag" data
 #+begin_example

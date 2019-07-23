@@ -205,8 +205,18 @@ proc ztagStringToJson*(ztag: string): string =
   return jArr.pretty()
 
 when isMainModule:
-  let
-    numFiles = paramCount()
-    files = commandLineParams()
-  for n in 0 ..< numFiles:
-    ztagFileToJson(files[n])
+  import std/[terminal]
+
+  # Example use:
+  #   > echo "<some ztag data>" | p4ztag_to_json
+  #   # prints the converted JSON to the stdout
+  if not isatty(stdin):
+    let
+      stdinData = readAll(stdin).strip()
+    echo stdinData.ztagStringToJson()
+  else:
+    let
+      numFiles = paramCount()
+      files = commandLineParams()
+    for n in 0 ..< numFiles:
+      ztagFileToJson(files[n])
