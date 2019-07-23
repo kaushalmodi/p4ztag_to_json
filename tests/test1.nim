@@ -43,3 +43,6 @@ suite "ztag to json":
 
   test "consecutive records with same field names but different values":
     doCheck("consecutive_records_same_fields")
+
+  test "basic test for one-level nesting":
+    doCheck("one_level_nesting")
