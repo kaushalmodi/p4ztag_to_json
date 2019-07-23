@@ -11,6 +11,7 @@ import regex
 
 const
   ztagPrefix* = "... "
+  ztagCommentPrefix* = "#... "
 
 type
   KeyId = tuple
@@ -91,7 +92,9 @@ proc addNestedKeyMaybe(keyid: KeyId; jValue, jElem: JsonNode; meta: var MetaData
 proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var MetaData) =
   when defined(debug):
     echo &"line.len = {line.len}, meta = {meta}"
-  if line.startsWith(ztagPrefix):
+  if line.startsWith(ztagCommentPrefix):
+    discard # Just ignore all lines beginning with the ztagCommentPrefix
+  elif line.startsWith(ztagPrefix):
     let
       splits = line[ztagPrefix.len .. ^1].split(' ', maxsplit=1)
       key = splits[0]

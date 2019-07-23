@@ -1,0 +1,8 @@
+#... below is the first record
+... abc hello world
+... def 123
+#... below newline finishes the above record
+
+#... and here is the second record
+... abc bye world
+... def 456.789

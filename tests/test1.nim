@@ -52,3 +52,6 @@ suite "ztag to json":
 
   test "test for two-level nesting":
     doCheck("two_level_nesting")
+
+  test "ignore ztag comments":
+    doCheck("ztag_comment")
