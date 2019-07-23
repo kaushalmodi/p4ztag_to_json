@@ -29,7 +29,10 @@ suite "ztag to json":
   test "check that a new record is created after a blank line":
     doCheck("newline_record_break")
 
-  test "check that a new record is *not* created after a blank line after desc":
+  test "check a new record is created after desc key if the next key is at the same or lower nested index value":
+    doCheck("desc_as_last_key_in_record")
+
+  test "check that a new record is *not* created after a blank line after desc if next key is at a higher nested index":
     doCheck("blank_line_after_desc")
 
   test "check nested record boundaries in a record are detected even when they don't separate by a blank line":
