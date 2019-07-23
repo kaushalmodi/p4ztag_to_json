@@ -129,7 +129,8 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
     jElem = updateJElem(keyid, valueJNode, jElem, meta)
     meta.prevKeyid = keyid
     meta.lastSeenKey = keyid.key
-  elif meta.lastSeenKey == "": # before the first ztag key got parsed
+  elif meta.lastSeenKey == "" and # before the first ztag key got parsed
+       line.strip().len > 0:
     jElem[ztagPreZtagMessageKey] = %* line
     meta.lastSeenKey = ztagPreZtagMessageKey
   else:
