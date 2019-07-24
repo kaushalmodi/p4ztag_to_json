@@ -80,6 +80,7 @@ script:
   - nim musl "${NIMFILE}"
   # Verify the built binary version.
   # - eval "${BINFILE} --version"
+  - eval "echo ... hello world | ${BINFILE}"
 
 before_deploy:
   - cd "${TRAVIS_BUILD_DIR}"
