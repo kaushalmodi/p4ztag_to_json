@@ -122,8 +122,10 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
     if meta.startNewElemMaybe and
        meta.prevKeyid.key == "" and
        meta.lastSeenKey != ztagPreZtagMessageKey and
-       keyid.id <= meta.prevKeyid.id and
-       (keyid.id == meta.prevKeyid.id and keyid.id2 <= meta.prevKeyid.id2):
+       ((keyid.id < meta.prevKeyid.id) or
+        (keyid.id == meta.prevKeyid.id and keyid.id2 <= meta.prevKeyid.id2)):
+      when defined(debug):
+        echo &"\nending the current json element; `{keyid.key}' key will be added to the next one"
       jArr.updateJArr(jElem, meta)
 
     jElem = updateJElem(keyid, valueJNode, jElem, meta)
