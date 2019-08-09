@@ -110,11 +110,21 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
   if line.startsWith(ztagCommentPrefix):
     discard # Just ignore all lines beginning with the ztagCommentPrefix
   elif line.startsWith(ztagPrefix):
+    var
+      key: string
+      value: string
     let
-      splits = line[ztagPrefix.len .. ^1].split(' ', maxsplit=1)
+      lineMinusDots = line[ztagPrefix.len .. ^1]
+      splits = lineMinusDots.split(' ', maxsplit=1)
+    if splits[0].startsWith("/"):
+      key = ztagMessageKey
+      value = lineMinusDots
+    else:
       key = splits[0]
-      keyid = getKeyId(key)
       value = splits[1]
+
+    let
+      keyid = getKeyId(key)
       valueJNode = %* value
 
     if meta.recordStartKey == "":
