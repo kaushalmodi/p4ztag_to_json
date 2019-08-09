@@ -35,6 +35,9 @@ suite "ztag to json":
   test "check a new record is created after desc key if the next key is at the same or lower nested index value":
     doCheck("desc_as_last_key_in_record")
 
+  test "check a new record is created at 'change' key":
+    doCheck("p4_describe__new_record_at_change_key")
+
   test "check that a new record is *not* created after a blank line after desc if next key is at a higher nested index":
     doCheck("blank_line_after_desc")
 
@@ -63,5 +66,5 @@ suite "ztag to json":
     doCheck("ztag_header")
     doCheck("ztag_header2")
 
-  test "check that the trialing blank line does not convert to a newline in json string":
+  test "check that the trailing blank line does not convert to a newline in json string":
     doCheck("trailing_blank_line")
