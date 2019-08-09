@@ -12,7 +12,7 @@ import regex
 const
   ztagPrefix* = "... "
   ztagCommentPrefix* = "#... "
-  ztagPreZtagMessageKey* = "message"
+  ztagMessageKey* = "message"
 
 type
   KeyId = object
@@ -126,7 +126,7 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
 
     if meta.startNewElemMaybe and
        meta.prevKeyid.key == "" and
-       meta.lastSeenKey != ztagPreZtagMessageKey and
+       meta.lastSeenKey != ztagMessageKey and
        ((keyid.key == meta.recordStartKey) or
         (keyid.id, keyid.id2) < (meta.prevKeyid.id, meta.prevKeyid.id2)):
       when defined(debug):
@@ -138,8 +138,8 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
     meta.lastSeenKey = keyid.key
   elif meta.lastSeenKey == "" and # before the first ztag key got parsed
        line.strip().len > 0:
-    jElem[ztagPreZtagMessageKey] = %* line
-    meta.lastSeenKey = ztagPreZtagMessageKey
+    jElem[ztagMessageKey] = %* line
+    meta.lastSeenKey = ztagMessageKey
   else:
     meta.startNewElemMaybe = true
     if line.len == 0 and # blank line following a non-blank line
