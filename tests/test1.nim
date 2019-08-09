@@ -68,3 +68,6 @@ suite "ztag to json":
 
   test "check that the trailing blank line does not convert to a newline in json string":
     doCheck("trailing_blank_line")
+
+  test "succeeded p4 action followed by a message":
+    doCheck("succedded_action_plus_message")
