@@ -26,6 +26,7 @@ type
     prevKeyid: KeyId
     lastSeenKey: string
     startNewElemMaybe: bool
+    recordStartKey: string
 
 proc getKeyId(key: string): KeyId =
   result = KeyId(key: key,
@@ -116,14 +117,18 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
       value = splits[1]
       valueJNode = %* value
 
+    if meta.recordStartKey == "":
+      # This is evaluated only once, when the very first key is parsed.
+      meta.recordStartKey = key
+
     when defined(debug):
       echo &"current line keyid = {keyid}"
 
     if meta.startNewElemMaybe and
        meta.prevKeyid.key == "" and
        meta.lastSeenKey != ztagPreZtagMessageKey and
-       ((keyid.id < meta.prevKeyid.id) or
-        (keyid.id == meta.prevKeyid.id and keyid.id2 <= meta.prevKeyid.id2)):
+       ((keyid.key == meta.recordStartKey) or
+        (keyid.id, keyid.id2) < (meta.prevKeyid.id, meta.prevKeyid.id2)):
       when defined(debug):
         echo &"\nending the current json element; `{keyid.key}' key will be added to the next one"
       jArr.updateJArr(jElem, meta)
@@ -168,7 +173,8 @@ template populateJArr(iter: untyped) {.dirty.} =
                                      nestedGroupKey: "",
                                      id2: -1,
                                      nestedGroupKey2: ""),
-                    startNewElemMaybe: false)
+                    startNewElemMaybe: false,
+                    recordStartKey: "")
 
   for line in iter:
     when defined(debug):
