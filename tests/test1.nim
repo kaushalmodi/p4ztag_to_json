@@ -70,4 +70,4 @@ suite "ztag to json":
     doCheck("trailing_blank_line")
 
   test "succeeded p4 action followed by a message":
-    doCheck("succedded_action_plus_message")
+    doCheck("succeeded_action_plus_message")
