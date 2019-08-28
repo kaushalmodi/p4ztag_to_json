@@ -71,3 +71,6 @@ suite "ztag to json":
 
   test "succeeded p4 action followed by a message":
     doCheck("succeeded_action_plus_message")
+
+  test "failed p4 action followed by a message":
+    doCheck("message_p4_edit_fail")
