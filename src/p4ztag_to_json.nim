@@ -118,7 +118,10 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
       splits = lineMinusDots.split(' ', maxsplit=1)
     if splits[0].startsWith("/"):
       key = ztagMessageKey
-      value = lineMinusDots
+      if jElem.hasKey(ztagMessageKey):
+        value = jElem[ztagMessageKey].getStr() & "\n" & lineMinusDots
+      else:
+        value = lineMinusDots
     else:
       key = splits[0]
       value = splits[1]
