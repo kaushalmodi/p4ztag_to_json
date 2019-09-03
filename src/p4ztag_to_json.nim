@@ -124,6 +124,8 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
         value = lineMinusDots
     else:
       key = splits[0]
+      # Force uncapitalize the keys #consistency
+      key[0] = key[0].toLowerAscii()
       value = splits[1]
 
     let

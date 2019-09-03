@@ -74,3 +74,6 @@ suite "ztag to json":
 
   test "failed p4 action followed by a message":
     doCheck("message_p4_edit_fail")
+
+  test "uncapitalize the keys":
+    doCheck("capitalized_keys")
