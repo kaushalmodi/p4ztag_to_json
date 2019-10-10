@@ -77,3 +77,6 @@ suite "ztag to json":
 
   test "uncapitalize the keys":
     doCheck("capitalized_keys")
+
+  test "keys without any values.. boolean keys?":
+    doCheck("boolean_keys")
