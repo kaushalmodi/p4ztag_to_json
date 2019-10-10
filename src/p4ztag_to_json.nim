@@ -5,9 +5,11 @@
 ## * `Helix Core P4 Command Reference<https://www.perforce.com/manuals/cmdref/Content/CmdRef/Commands%20by%20Functional%20Area.html>`_
 ## * `Fun with Formatting - Perforce Blog<https://www.perforce.com/blog/fun-formatting>`_
 
-import std/[os, json, strformat]
+import std/[os, json]
 import std/strutils except replace
 import regex
+when defined(debug):
+  import std/[strformat]
 
 const
   ztagPrefix* = "... "
@@ -77,7 +79,7 @@ proc updateJArr(jArr, jElem: var JsonNode; meta: var MetaData) =
   meta.startNewElemMaybe = false
 
 proc updateJElem(keyid: KeyId; jValue, jElem: JsonNode; meta: var MetaData): JsonNode =
-  ## Assign value to a key directly in ``jElem`` or to a nested
+  ## Assign ``jValue`` to a key directly in ``jElem`` or to a nested
   ## element in that.
   if keyid.id == -1: # top level element
     jElem[keyid.key] = jValue
@@ -112,25 +114,30 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
   elif line.startsWith(ztagPrefix):
     var
       key: string
-      value: string
+      valueStr: string
+      valueJNode: JsonNode
     let
       lineMinusDots = line[ztagPrefix.len .. ^1]
       splits = lineMinusDots.split(' ', maxsplit=1)
     if splits[0].startsWith("/"):
       key = ztagMessageKey
       if jElem.hasKey(ztagMessageKey):
-        value = jElem[ztagMessageKey].getStr() & "\n" & lineMinusDots
+        valueStr = jElem[ztagMessageKey].getStr() & "\n" & lineMinusDots
       else:
-        value = lineMinusDots
+        valueStr = lineMinusDots
+      valueJNode = %* valueStr
     else:
       key = splits[0]
       # Force uncapitalize the keys #consistency
       key[0] = key[0].toLowerAscii()
-      value = splits[1]
+      if splits.len == 2: # "... key valueStr"
+        valueStr = splits[1]
+        valueJNode = %* valueStr
+      else: # splits.len == 1, "... boolean_key"
+        valueJNode = %* true
 
     let
       keyid = getKeyId(key)
-      valueJNode = %* value
 
     if meta.recordStartKey == "":
       # This is evaluated only once, when the very first key is parsed.
