@@ -15,6 +15,7 @@ const
   ztagPrefix* = "... "
   ztagCommentPrefix* = "#... "
   ztagMessageKey* = "message"
+  ztagKeysWithMultiLineValues* = ["desc"]
 
 type
   KeyId = object
@@ -150,6 +151,9 @@ proc convertZtagLineToJson(line: string; jElem, jArr: var JsonNode; meta: var Me
        meta.prevKeyid.key == "" and
        meta.lastSeenKey != ztagMessageKey and
        ((keyid.key == meta.recordStartKey) or
+        ((meta.lastSeenKey notin ztagKeysWithMultiLineValues) and
+         (keyid.key != ztagMessageKey) and # we do not have records with just message key/val
+         (keyid.id, keyid.id2) == (-1, -1)) or
         (keyid.id, keyid.id2) < (meta.prevKeyid.id, meta.prevKeyid.id2)):
       when defined(debug):
         echo &"\nending the current json element; `{keyid.key}' key will be added to the next one"

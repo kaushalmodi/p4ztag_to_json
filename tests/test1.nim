@@ -80,3 +80,6 @@ suite "ztag to json":
 
   test "keys without any values.. boolean keys?":
     doCheck("boolean_keys")
+
+  test "multiple records separated by blank line":
+    doCheck("annotate_output")
