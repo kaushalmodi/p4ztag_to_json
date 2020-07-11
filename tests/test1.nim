@@ -14,7 +14,7 @@ template doCheck(name: string) =
     actualJson = readFile(ztagFile).ztagStringToJson()
     actualJsonFile = tmpDir / (name & ".actual.json")
   if actualJson != refJson:
-    if existsDir(tmpDir):
+    if dirExists(tmpDir):
       removeDir(tmpDir)   # Remove the old tmp/ directory if it exists
     createDir(tmpDir)
     actualJsonFile.writeFile(actualJson)
