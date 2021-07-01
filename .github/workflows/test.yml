@@ -31,5 +31,5 @@ jobs:
           nimble install --depsOnly --accept
           # Test installing PROGNAME using nimble.
           # --reject denies the offer to install from PROGNAME@#head if "nimble install PROGNAME" fails.
-          nimble install --reject "${PROGNAME}"
+          nimble install --reject p4ztag_to_json
           nim test

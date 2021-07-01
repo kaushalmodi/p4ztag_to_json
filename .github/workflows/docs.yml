@@ -21,9 +21,6 @@ jobs:
         run: |
           # --accept to say Yes to prompts like "Prompt: No local packages.json found, download it from internet? [y/N]"
           nimble install --depsOnly --accept
-          # Test installing PROGNAME using nimble.
-          # --reject denies the offer to install from PROGNAME@#head if "nimble install PROGNAME" fails.
-          nimble install --reject "${PROGNAME}"
           nim docs
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3.7.3
