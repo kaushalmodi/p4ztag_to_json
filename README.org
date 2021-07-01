@@ -1,5 +1,8 @@
 #+title: P4 Ztag to JSON
 
+[[https://github.com/kaushalmodi/p4ztag_to_json/actions/workflows/test.yml][https://github.com/kaushalmodi/p4ztag_to_json/actions/workflows/test.yml/badge.svg]]
+[[https://github.com/kaushalmodi/p4ztag_to_json/actions/workflows/docs.yml][https://github.com/kaushalmodi/p4ztag_to_json/actions/workflows/docs.yml/badge.svg]]
+
 Little utility to convert the Perforce P4 "Ztag" format data to JSON.
 
 * Command line
